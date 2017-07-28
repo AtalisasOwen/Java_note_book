@@ -43,7 +43,7 @@ close()
 
 //过滤器流
 //网络 => TelnetInputStream => BufferedInputStream => CipherInputStream => 
-                            文本 <= InputstreamReader => <= GZIPInputStream 
+                            文本 <= InputstreamReader => <= GZIPInputStream
 ```
 
 * ### 字符流Writer，Reader
