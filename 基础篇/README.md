@@ -1,6 +1,6 @@
 # 基础篇
 
-* ### JDK版本变化
+* ### [JDK版本变化](/基础篇/JDK版本.md)
 * ### Object方法
 * ### == 与 equals（）的区别
 * ### equals\(\) 与 hashCode\(\) 的关系
