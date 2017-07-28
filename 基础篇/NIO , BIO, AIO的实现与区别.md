@@ -26,7 +26,37 @@
 
 #### 也就是说，这个时候，已经不是一个连接就要对应一个处理线程了，而是有效的请求，对应一个线程，当连接没有数据时，是没有工作线程来处理的。
 
+## IO库
 
+* ### 字节流InputStream，OutputStream
+
+```
+//OutputStream
+write(byte[] output)
+flush()
+close()
+
+//InputStream
+read(byte[] input)
+flush()
+close()
+
+//过滤器流
+//网络 => TelnetInputStream => BufferedInputStream => CipherInputStream => 
+                            文本 <= InputstreamReader => <= GZIPInputStream 
+```
+
+* ### 字符流Writer，Reader
+
+```java
+//文件系统
+BufferedReader br = new BufferedReader(new FileReader(filename));
+
+//标准输入
+BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+```
+
+### 
 
 
 
