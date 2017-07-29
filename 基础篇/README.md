@@ -8,7 +8,7 @@
 * ### [final，finally，finalize](/基础篇/final，finally，finalize.md)
 * ### NIO , BIO, AIO的实现与区别
 * ### [String，StringBuilder，StringBuffer](#string，stringbuilder，stringbuffer)
-* ### 序列化与反序列化
+* ### [序列化与反序列化](/基础篇/序列化与反序列化.md)
 
 
 
