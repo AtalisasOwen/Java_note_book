@@ -1,6 +1,6 @@
 # Object方法
 
-* ### wait\(\) 
+* ### wait\(\)
 * ### notify\(\), notifyAll\(\)
 * ### equals\(\), hashCode\(\)
 * ### getClass\(\)
