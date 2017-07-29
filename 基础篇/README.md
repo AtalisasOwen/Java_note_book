@@ -10,6 +10,7 @@
 * ### [String，StringBuilder，StringBuffer](#string，stringbuilder，stringbuffer)
 * ### [序列化与反序列化](/基础篇/序列化与反序列化.md)
 * ### 面向对象：封装，继承，多态，抽象
+* ### 对象的强、软、弱和虚引用
 
 
 
