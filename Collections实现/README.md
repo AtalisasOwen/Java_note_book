@@ -9,7 +9,7 @@
 * ### 深度优先与广度优先
 * ### 图的表示
 * ### Vector与HashMap的区别
-* ### HashSet的实现
+* ### [各自Set的实现，和HashMap的区别](/Collections实现/HashSet的实现，和HashMap的区别.md)
 * ### TreeMap的实现，红黑树
 
 
