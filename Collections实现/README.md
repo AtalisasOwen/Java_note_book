@@ -1,7 +1,7 @@
 # Collections
 
 * ### ArrayList与LinkedList的区别
-* ### HashMap与HashTable的区别
+* ### [HashMap与HashTable的区别](/Collections实现/HashMap与HashTable的区别.md)
 * ### HashMap的实现，Entry，红黑树
 * ### ConcurrentHashMap的实现
 * ### 堆的动态调整
