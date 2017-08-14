@@ -76,7 +76,7 @@ static final int hash(Object key) {   //jdk1.8 & jdk1.7
 45             return oldValue;
 46         }
 47     }
- 
+
 48     ++modCount;
 49     // 步骤⑥：超过最大容量 就扩容
 50     if (++size > threshold)
@@ -84,6 +84,12 @@ static final int hash(Object key) {   //jdk1.8 & jdk1.7
 52     afterNodeInsertion(evict);
 53     return null;
 54 }
+```
+
+* ### resize\(\)方法
+
+```
+
 ```
 
 
