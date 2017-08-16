@@ -20,7 +20,7 @@
 ## - 三次握手
 
 * ### 第一次握手：建立连接。客户端发送请求报文段，将SYN位置设置为1，Sequence Number为x，然后客户端进入SYN\_SEND状态，等待服务器的确认。
-* ### 第二次握手：服务器收到SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为x+1\(Sequence Number + 1\)。同时，自己还要发送SYN请求信息，将SYN设置为1，Sequence Number为y；服务器将上述所有信息放到一个报文段（即SYN+ACK）中，一并发送到客户端，此时服务器进入SYN\_RECV状态。
+* ### 第二次握手：服务器收到SYN报文段，需要对这个SYN报文段进行确认，设置Acknowledgment Number为x+1\(Sequence Number + 1\)。同时，自己还要发送SYN请求信息，将SYN设置为1，Sequence Number为y；服务器将上述所有信息放到一个报文段（即SYN+ACK）中，一并发送到客户端，此时服务器进入SYN\_RECV状态。（）
 * ### 第三次握手：客户端收到服务器的SYN+ACK报文段。然后将Acknowledgment Number设置为y+1，向服务器发送ACK报文段，这个报文段发送完毕以后，客户端和服务端都进行Establish的状态，完成TCP三次握手。
 
 ## - 四次挥手
@@ -41,7 +41,6 @@
 
   * ### FIN\_WAIT\_1：FIN\_WAIT\_1与FIN\_WAIT\_2状态的真正含义都是表示等待对方的FIN报文，区别在于：FIN\_WAIT\_1状态实际上是当SOCKET在ESTABLISHED状态时，它想主动关闭连接，向对方发送FIN报文，此时该SOCKET即进入到FIN\_WAIT\_1状态。而当对方回应ACK报文后，则进入到FIN\_WAIT\_2状态，当然在实际的正常情况下，无论对方何种情况下，都应该马上回应ACK报文，所以FIN\_WAIT\_1状态一般是比较难见到的，而FIN\_WAIT\_2状态还有时常常可以用netstat看到。\(主动方\)
   * ### FIN\_WAIT\_2：实际上FIN\_WAIT\_2状态下的SOCKET，表示半连接，也即有一方要求close连接，但另外还告诉对方，我暂时还有点数据需要传送给你（ACK信息）, 稍后关闭连接。（主动方）
-
   * ### CLOSE\_WAIT：这种状态的含义其实是表示在等待关闭。当对方close一个SOCKET后发送FIN报文给自己，你的系统毫无疑问会回应一个ACK报文给对方，此时则进入到CLOSE\_WAIT状态。接下来，实际上你真正需要考虑的事情是查看你是否还有数据要发给对方。如果没有的话，就可以close这个SOCKET，发送FIN报文给对方，也即关闭连接。所以你在CLOSE\_WAIT状态下，需要完成的事情是等待你去关闭连接。（被动方）
   * ### LAST\_ACK：它是被动关闭一方在发送FIN报文中，最后等待对方的ACK报文。当收到ACK报文，也即进入CLOSED可用状态了。（被动方）
   * ### TIME\_WAIT：表示收到了对方的FIN报文，并发送出了ACK报文，就等2MSL后即可回到CLOSED可用状态了。如果在FIN\_WAIT\_1状态下，收到了对方同时带FIN标志和ACK标志的报文时，可以直接进入到TIME\_WAIT状态，而无须经过FIN\_WAIT\_2状态（主动方）
