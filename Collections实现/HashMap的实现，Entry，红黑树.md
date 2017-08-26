@@ -175,6 +175,8 @@ static final int hash(Object key) {   //jdk1.8 & jdk1.7
 
 * ### 非线程安全
 
+  * ### 在put\(\)方法中会遍历链表，在多线程情况链表会成环。造成死循环。
+
 * ### 链表转为红黑树
 
 ```java
