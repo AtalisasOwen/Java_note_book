@@ -1,15 +1,15 @@
-### **CAS 算法与**AtomicInteger 的实现原理
+### **CAS 算法与**AtomicInteger 的实现原理
 
 ```java
 public class AtomicInteger extends Number implements java.io.Serializable {  
-      
+
     private volatile int value;              //用volatile来实现可见性
-  
-      
+
+
     public final int get() {  
         return value;  
     }  
-      
+
     public final int getAndIncrement() {  
         for (;;) {  
             int current = get();              //获取当前值
@@ -18,11 +18,27 @@ public class AtomicInteger extends Number implements java.io.Serializable {
                 return current;               //成功了，则返回+1以后的值
         }  
     }  
-      
+
     public final boolean compareAndSet(int expect, int update) {  
         return unsafe.compareAndSwapInt(this, valueOffset, expect, update);  
-    }  
+    }
 ```
+
+* ### compareAndSet利用JNI来完成CPU指令的操作。
+
+```c
+int compare_and_swap (int* reg, int oldval, int newval) 
+{
+  ATOMIC();
+  int old_reg_val = *reg;
+  if (old_reg_val == oldval) 
+     *reg = newval;
+  END_ATOMIC();
+  return old_reg_val;
+}
+```
+
+
 
 
 
