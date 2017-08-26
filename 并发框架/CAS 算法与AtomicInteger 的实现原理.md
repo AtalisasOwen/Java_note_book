@@ -38,7 +38,13 @@ int compare_and_swap (int* reg, int oldval, int newval)
 }
 ```
 
+* ### Java8中CAS的增强
 
+```java
+public final int getAndIncrement() {
+        return unsafe.getAndAddInt(this, valueOffset, 1);
+}
+```
 
 
 
