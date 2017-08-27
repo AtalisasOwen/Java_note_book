@@ -7,13 +7,11 @@
 | tryLock\(5, TimeUnit.SECOND\) | 会等待一段时间。成功返回true，否则返回false |
 |  |  |
 
-
-
 ```java
 public class TestLock implement Runnable{
     public static ReentrantLock lock = new ReentrantLock();
     public static int i = 0;
-    
+
     @override
     public void run(){
         for(int j = 0;j < 10000;j++){
@@ -25,21 +23,21 @@ public class TestLock implement Runnable{
             }
         }
     }
-    
+
     public static void main(String...args) throws InterruptedException{
         TestLock tl = new TestLock();
         Thread t1 = new Thread(tl);
         Thread t2 = new Thread(t2);
-        
+
         t1.start();
         t2.start();
-        
+
         t1.join();
         t2.join();
-        
+
         System.out.print(i);
     }
-    
+
 }
 ```
 
@@ -104,19 +102,19 @@ public class IntLock implements Runnable {
         t1.start();t2.start();
 
         Thread.sleep(1000);
-        
+
         t2.interrupt();//中断一个线程
         /*
         java.lang.InterruptedException
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireInterruptibly(AbstractQueuedSynchronizer.java:898)
-	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireInterruptibly(AbstractQueuedSynchronizer.java:1222)
-	at java.util.concurrent.locks.ReentrantLock.lockInterruptibly(ReentrantLock.java:335)
-	at atalisas.Crawler.IntLock.run(IntLock.java:33)
-	at java.lang.Thread.run(Thread.java:745)
+    at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireInterruptibly(AbstractQueuedSynchronizer.java:898)
+    at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireInterruptibly(AbstractQueuedSynchronizer.java:1222)
+    at java.util.concurrent.locks.ReentrantLock.lockInterruptibly(ReentrantLock.java:335)
+    at atalisas.Crawler.IntLock.run(IntLock.java:33)
+    at java.lang.Thread.run(Thread.java:745)
         13：Thread Exit
         12：Thread Exit
         */
-        
+
     }
 
 }
@@ -127,7 +125,7 @@ public class IntLock implements Runnable {
 ```java
 public class TimeLock implements Runnable{
     private static ReentrantLock lock = new ReetrantLock();
-    
+
     @override
     public void run(){
         try{
@@ -142,17 +140,16 @@ public class TimeLock implements Runnable{
                 lock.unlock();
         }
     }
-    
+
     public static void main(String...args){
         TimeLock tl = new TimeLock();
         Thread t1 = new Thread(tl);
         Thread t2 = new Thread(tl);
-        
+
         t1.start();
         t2.start();//这个会失败
     }
 }
-
 ```
 
 * ### 公平锁和非公平锁：公平锁会先来先得，维护一个队列
@@ -161,7 +158,43 @@ public class TimeLock implements Runnable{
 ReentrantLock lock = new ReentrantLock(true);    //通过构造方法实现公平锁
 ```
 
+# Condition: 与ReentrantLock合用实现等待/通知模式
 
+| 方法 | 作用 |
+| :--- | :--- |
+| await\(\), await\(time,TimeUnit\) | 会使当前线程等待\(一段时间\)并释放锁，直到被唤醒 |
+| awaitUninterruptibly\(\) | 不会被中断的线程等待 |
+| signal\(\), signalAll\(\) | 唤醒线程 |
+
+```java
+public class IntLock implements Runnable {
+    public static ReentrantLock lock = new ReentrantLock();
+    public static Condition condition = lock.newCondition();
+
+    @Override
+    public void run() {
+        try{
+            lock.lock();
+            condition.await();
+            System.out.println("Thread is going on!");
+        }catch (InterruptedException e){}
+        finally {
+            lock.unlock();
+        }
+    }
+
+    public static void main(String...args) throws Exception{
+        IntLock tl = new IntLock();
+        Thread t1 = new Thread(tl);
+        t1.start();
+        Thread.sleep(2000);
+        lock.lock();
+        condition.signalAll();        //过2秒后，通知线程继续运行
+        lock.unlock();
+    }
+
+}
+```
 
 
 
