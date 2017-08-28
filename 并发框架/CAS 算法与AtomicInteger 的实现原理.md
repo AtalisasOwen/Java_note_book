@@ -2,7 +2,9 @@
 
 * ### 原理：
 
-  * ### CAS有三个操作数：内存值
+  * ### CAS有三个操作数：内存值V，预期值A，更新值B
+  * ### 如果V==A, 则V被赋值为B
+  * ### 否则不干任何事（或循环，直到上述判断成立）
 
 ```java
 public class AtomicInteger extends Number implements java.io.Serializable {  
