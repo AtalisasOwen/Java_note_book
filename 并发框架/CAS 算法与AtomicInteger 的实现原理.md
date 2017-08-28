@@ -1,5 +1,9 @@
 ### **CAS \(campare and swap\)算法与**AtomicInteger 的实现原理
 
+* ### 原理：
+
+  * ### CAS有三个操作数：内存值
+
 ```java
 public class AtomicInteger extends Number implements java.io.Serializable {  
 

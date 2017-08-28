@@ -89,7 +89,7 @@ private T setInitialValue() {
             createMap(t, value);
         return value;
     }
-    
+
 ThreadLocalMap getMap(Thread t) {
         return t.threadLocals;
 }
