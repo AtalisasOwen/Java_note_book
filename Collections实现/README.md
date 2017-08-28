@@ -3,7 +3,7 @@
 * ### [ArrayList与LinkedList的区别](/Collections实现/ArrayList与LinkedList的区别.md)
 * ### [HashMap与HashTable的区别](/Collections实现/HashMap与HashTable的区别.md)
 * ### [HashMap的实现，Entry，红黑树](/Collections实现/HashMap的实现，Entry，红黑树.md)
-* ### ConcurrentHashMap的实现
+
 * ### 堆的动态调整
 * ### Dijkstra算法
 * ### 深度优先与广度优先

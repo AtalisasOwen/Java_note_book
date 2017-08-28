@@ -1,4 +1,4 @@
-### **CAS 算法与**AtomicInteger 的实现原理
+### **CAS \(campare and swap\)算法与**AtomicInteger 的实现原理
 
 ```java
 public class AtomicInteger extends Number implements java.io.Serializable {  
