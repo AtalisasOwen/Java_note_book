@@ -196,5 +196,74 @@ public class IntLock implements Runnable {
 }
 ```
 
+* ### 实现原理
+
+```java
+final void lock() {
+     acquire(1);
+}
+
+=>AbstractQueuedSynchronizer.acquire
+public final void acquire(int arg) {
+    if (!tryAcquire(arg) &&                                //首先尝试获取,未获取则入队列,获取直接返回不打断
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))     //addWaiter,将新请求加入队列尾进行等待，tryAcquire子类实现
+        selfInterrupt();                                   //Thread.currentThread().interrupt();
+}
+
+=>ReentrantLock.FairSync.tryAcquire
+protected final boolean tryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();    //获取当前线程
+        int c = getState();                               //获取父类AQS中的标志位
+        if (c == 0) {
+            if (!hasQueuedPredecessors() &&                //如果队列中没有其他线程，说明没有线程占有锁
+                compareAndSetState(0, acquires)) {         //修改一下状态位,acquires为1
+                setExclusiveOwnerThread(current);          //如果通过CAS操作将状态更新成功，则证明当前线程得锁，并做一个标记
+                return true;                               //表示tryAcquire成功
+            }
+        }
+        else if (current == getExclusiveOwnerThread()) {   //如果不为0，则锁被拿走，但是为可重入锁，要判断是不是自己拿的
+            int nextc = c + acquires;                      //将lock()的次数变为n+1次，说明也要unlock这么多次
+            if (nextc < 0)
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+}
+
+=>AbstractQueuedSynchronizer.AddWaiter
+private Node addWaiter(Node mode) {
+    Node node = new Node(Thread.currentThread(), mode);        //用当前线程构建一个Node,mode表示是独占的，还是共享的，
+    // Try the fast path of enq; backup to full enq on failure
+    Node pred = tail;                                          //标准的插入到链表尾部
+    if (pred != null) {                                        //在队列不为空
+        node.prev = pred;
+        if (compareAndSetTail(pred, node)) {                    //修改失败，表示有并发，进入enq(node)死循环
+            pred.next = node;
+            return node;
+        }
+    }
+    enq(node);                                                //进入死循环
+    return node;
+}
+
+=>AbstractQueuedSynchronizer.enq
+private Node enq(final Node node) {
+    for (;;) {
+        Node t = tail;
+        if (t == null) { // Must initialize
+            if (compareAndSetHead(new Node()))
+                tail = head;
+        } else {
+            node.prev = t;
+            if (compareAndSetTail(t, node)) {
+                t.next = node;
+                return t;
+            }
+        }
+    }
+}
+```
+
 
 
