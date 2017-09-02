@@ -249,18 +249,44 @@ private Node addWaiter(Node mode) {
 
 =>AbstractQueuedSynchronizer.enq
 private Node enq(final Node node) {
-    for (;;) {
+    for (;;) {                                                //死循环，为了避免竞态失败
         Node t = tail;
-        if (t == null) { // Must initialize
-            if (compareAndSetHead(new Node()))
-                tail = head;
+        if (t == null) { // Must initialize                   //队列尾为空
+            if (compareAndSetHead(new Node()))                //如果无竞态
+                tail = head;                                  //尾等于头，说明只有一个节点
         } else {
-            node.prev = t;
-            if (compareAndSetTail(t, node)) {
+            node.prev = t;                                    //
+            if (compareAndSetTail(t, node)) {                 //不为空则将入队列尾
                 t.next = node;
-                return t;
+                return t;                                     //无竞态则成功
             }
         }
+    }
+}
+
+=>AbstractQueuedSynchronizer.acquireQueued
+final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            final Node p = node.predecessor();
+            if (p == head && tryAcquire(arg)) {
+             //如果当前的节点是head说明他是队列中第一个“有效的”节点，因此尝试获取，上文中有提到这个类是交给子类去扩展的。
+                setHead(node);//成功后，将上图中的黄色节点移除，Node1变成头节点。
+                p.next = null; // help GC
+                failed = false;
+                return interrupted;
+            }
+            if (shouldParkAfterFailedAcquire(p, node) && 
+            //否则，检查前一个节点的状态为，看当前获取锁失败的线程是否需要挂起。
+                parkAndCheckInterrupt()) 
+           //如果需要，借助JUC包下的LockSopport类的静态方法Park挂起当前线程。知道被唤醒。
+                interrupted = true;
+        }
+    } finally {
+        if (failed) //如果有异常
+            cancelAcquire(node);// 取消请求，对应到队列操作，就是将当前节点从队列中移除。
     }
 }
 ```
