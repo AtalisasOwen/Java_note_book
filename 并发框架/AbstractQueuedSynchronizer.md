@@ -55,20 +55,14 @@ Node {
   | protected int tryAcquireShared\(int arg\) | 共享模式获取状态 |
   | protected int tryReleaseShared\(int arg\) | 共享模式释放状态 |
   | protected boolean isHeldExclusively | 排他模式。状态是否被占有。 |
+* ### 示例
 
-* ### acquire\(int arg\)详解
-
-```java
-public final void acquire(int arg) {
-    if (!tryAcquire(arg) &&                                //首先尝试获取,未获取则入队列
-        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))     //addWaiter,将新请求加入队列尾进行等待
-        selfInterrupt();
-}
-
-protected boolean tryAcquire(int arg) {
-    throw new UnsupportedOperationException();            //未实现，要子类自己实现
-}
 ```
+
+
+```
+
+
 
 
 
