@@ -5,11 +5,56 @@
 * ### 该同步器可以作为排他模式或者共享模式来运行。如ReentrantReadWriteLock内部，写锁的实现为排他，而读锁的实现为共享。
 * ### 内部实现依赖于FIFO队列，队列中的元素Node保存着线程引用和线程状态的容器，每个线程的访问可以视为队列中的一个节点Node
 
+```java
+Node {
+        /**
+         * SIGNAL:      该节点的下一个节点被堵塞了，所以当前节点在取消或者完成后，
+         *              必须唤醒它的下一个节点。为了避免竞态，acquire方法需要
+         *              指示需要一个信号。然后重试原子获取
+         * CANCELLED:   这个节点由于超时或者打断而取消了。一旦变成这个状态后，不会
+         *              发生改变，此外，也不会阻塞队列了
+         * CONDITION:   该节点在条件队列中，该节点不会被用作同步队列的节点，直到状态
+         *              被改变（改变后，会为0）
+         * PROPAGATE:   当共享模式的节点释放后，会将锁传递给下一个节点用doReleaseShared
+         *              来确保传递会持续
+         * 0:           表示什么都不做
+         * 非负数:       表示该节点不需要被通知
+         *
+         * 这个变量会使用CAS来改变
+         */
+        volatile int waitStatus;int waitStatus;
+         /**
+         * 指向上一个节点
+         * 当当前节点取消时，会使用node.prev.next = node.next来删除节点
+         * 头节点不可能被取消，因为头结点表示成功获取了锁
+         * 而取消的节点也不可能获取锁，并且线程只能取消自己，不能取消别的线程
+         */
+        volatile Node prev;
+        //指向下一个节点
+        volatile Node next;
+        //该节点保存的线程
+        volatile Thread thread;
 
+        /**
+         * 连接下一个在等待中的线程，或者SHARED节点
+         * 取值为SHARED或者下一个节点
+         */
+        Node nextWaiter;
+}
+```
 
+* ### 同步队列的结构
 
+### ![](/assets/21.png)
 
+* ### API说明
 
+  | protected boolean tryAcquire\(int arg\) | 排他的获取这个状态。这个方法的实现需要查询当前状态是否允许获取,然后再获取\(使用compareAndSetState\)状态 |
+  | :--- | :--- |
+  | protected boolean tryRelease\(int arg\) | 释放状态 |
+  | protected int tryAcquireShared\(int arg\) | 共享模式获取状态 |
+  | protected int tryReleaseShared\(int arg\) | 共享模式释放状态 |
+  | protected boolean isHeldExclusively | 排他模式。状态是否被占有。 |
 
 * ### acquire\(int arg\)详解
 
@@ -19,7 +64,7 @@ public final void acquire(int arg) {
         acquireQueued(addWaiter(Node.EXCLUSIVE), arg))     //addWaiter,将新请求加入队列尾进行等待
         selfInterrupt();
 }
-    
+
 protected boolean tryAcquire(int arg) {
     throw new UnsupportedOperationException();            //未实现，要子类自己实现
 }
