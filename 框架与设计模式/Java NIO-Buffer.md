@@ -36,7 +36,7 @@ ByteBuffer buff = ByteBuffer.allocate(10);
 buff.put((byte) 'A');  
 buff.put((byte) 'B');  
 buff.put((byte) 'C');  
-buff.put((byte) 'D'); 
+buff.put((byte) 'D');
 ```
 
 ![](/assets/20140611223142031.jpeg)
@@ -115,14 +115,14 @@ public final Buffer mark() {
     mark = position;  
     return this;  
 }  
-  
+
 public final Buffer reset() {  
     int m = mark;  
     if (m < 0)  
         throw new InvalidMarkException();  
     position = m;  
     return this;  
-} 
+}
 ```
 
 * ### 比较
@@ -136,8 +136,6 @@ compareTo\(T that\)：比较相同类型的缓存区，比较position到limit之
 ![](/assets/20140611232502468.jpeg)
 
 * > ### 批量移动：高效移动数据，这是缓存区的目的
-
-
 
 
 
