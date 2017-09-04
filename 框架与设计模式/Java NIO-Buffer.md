@@ -24,6 +24,10 @@ CharBuffer buffer = CharBuffer.wrap(myChars, 3, 8);//将myChars数组作为内�
 //CharBuffer独有的函数:
 //public static CharBuffer CharBuffer.wrap(CharSequence csq,int start.int end);
 CharBuffer b = CharBuffer.wrap("Hello World");//这样创建的Buffer是只读的...
+
+public final boolean hasArray()
+public final char[] array()
+public final int arrayOffset()//返回缓存区数据在数组中存储的开始位置的偏移量
 ```
 
 ## 操作Buffer:
@@ -136,6 +140,28 @@ compareTo\(T that\)：比较相同类型的缓存区，比较position到limit之
 ![](/assets/20140611232502468.jpeg)
 
 * > ### 批量移动：高效移动数据，这是缓存区的目的
+
+```java
+//批量取出数据
+public CharBuffer get(char[] dst)
+public CharBuffer get(char[] dst,int offset,int length)
+
+//批量存入数据
+public final CharBuffer put(char[] src)
+public final CharBuffer put(char[] src, int offset,int length)
+public final CharBuffer put(CharBuffer src)
+
+public final CharBuffer put(String src)
+public final CharBuffer put(String src,int start,int end)
+```
+
+## 复制缓存区
+
+```java
+public abstract CharBuffer duplicate();           //复制为一个可读可写的缓存区
+public abstract CharBuffer asReadOnlyBuffer();    //复制为一个只读缓冲区
+public abstract CharBuffer slice();               //复制一个从源缓冲position到limit的新缓冲区
+```
 
 
 
