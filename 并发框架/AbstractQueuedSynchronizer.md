@@ -57,7 +57,7 @@ Node {
   | protected int tryAcquireShared\(int arg\) | 共享模式获取状态 |
   | protected int tryReleaseShared\(int arg\) | 共享模式释放状态 |
   | protected boolean isHeldExclusively | 排他模式。状态是否被占有。 |
-* ### 示例
+* # 示例=&gt;独占模式
 
 ```java
 //独占模式
@@ -271,7 +271,7 @@ final boolean acquireQueued(final Node node, int arg) {
             }
             return false;
         }
-        
+
        protected final boolean tryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
             int c = getState();
@@ -290,6 +290,151 @@ final boolean acquireQueued(final Node node, int arg) {
                 return true;
             }
             return false;
+        }
+```
+
+* ### public final void acquireInterruptibly\(int arg\)
+
+该方法提供获取状态能力，当然在无法获取状态的情况下会进入sync队列进行排队，这类似acquire，但是和acquire不同的地方在于它能够在外界对当前线程进行中断的时候提前结束获取状态的操作，换句话说，就是在类似synchronized获取锁时，外界能够对当前线程进行中断，并且获取锁的这个操作能够响应中断并提前返回。一个线程处于synchronized块中或者进行同步I/O操作时，对该线程进行中断操作，这时该线程的中断标识位被设置为true，但是线程依旧继续运行。
+
+如果在获取一个通过网络交互实现的锁时，这个锁资源突然进行了销毁，那么使用acquireInterruptibly的获取方式就能够让该时刻尝试获取锁的线程提前返回。而同步器的这个特性被实现Lock接口中的lockInterruptibly方法。根据Lock的语义，在被中断时，lockInterruptibly将会抛出InterruptedException来告知使用者。
+
+```java
+    public final void acquireInterruptibly(int arg)
+            throws InterruptedException {
+        if (Thread.interrupted())                            //检查当前线程是否中断
+            throw new InterruptedException();
+        if (!tryAcquire(arg))                                //尝试获取，成功直接返回
+            doAcquireInterruptibly(arg);                     //否则构造节点并入队列
+    }
+    
+    private void doAcquireInterruptibly(int arg)
+        throws InterruptedException {
+        final Node node = addWaiter(Node.EXCLUSIVE);
+        boolean failed = true;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return;
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&    //中断检查
+                    parkAndCheckInterrupt())
+                    throw new InterruptedException();
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+```
+
+* ## private boolean doAcquireNanos\(int arg, long nanosTimeout\)
+
+```java
+    private boolean doAcquireNanos(int arg, long nanosTimeout)
+            throws InterruptedException {
+        if (nanosTimeout <= 0L)
+            return false;
+        final long deadline = System.nanoTime() + nanosTimeout;
+        final Node node = addWaiter(Node.EXCLUSIVE);                //加入队列
+        boolean failed = true;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {                //前驱节点或者获取锁了，直接返回
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return true;
+                }
+                nanosTimeout = deadline - System.nanoTime();      
+                if (nanosTimeout <= 0L)
+                    return false;
+                if (shouldParkAfterFailedAcquire(p, node) &&        //获取失败，则等待一段时间
+                    nanosTimeout > spinForTimeoutThreshold)
+                    LockSupport.parkNanos(this, nanosTimeout);
+                if (Thread.interrupted())
+                    throw new InterruptedException();
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+```
+
+![](/assets/t_9683_1379328891_568034081.png)
+
+* # 示例=&gt;共享模式
+* ### public final void acquireShared\(int arg\)
+
+共享模式里，多个线程可以同时读文件，但此时写操作是堵塞的。
+
+![](/assets/t_9683_1379328959_1702388031.png)
+
+```java
+    public final void acquireShared(int arg) {
+        if (tryAcquireShared(arg) < 0)                //如果获取成功则立刻返回
+            doAcquireShared(arg);                     //否则进入sync队列
+    }
+    
+    protected int tryAcquireShared(int arg) {
+        throw new UnsupportedOperationException();
+    }
+    
+    private void doAcquireShared(int arg) {
+        final Node node = addWaiter(Node.SHARED);    
+        boolean failed = true;
+        try {
+            boolean interrupted = false;
+            for (;;) {                                //循环内判断退出队列条件
+                final Node p = node.predecessor();
+                if (p == head) {
+                    int r = tryAcquireShared(arg);
+                    if (r >= 0) {
+                        setHeadAndPropagate(node, r); //如果当前节点的前驱节点是头结点并且获取共享状态成功
+                        p.next = null; // help GC
+                        if (interrupted)
+                            selfInterrupt();
+                        failed = false;
+                        return;
+                    }
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    interrupted = true;
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+
+```
+
+* ### protected int tryAcquireShared\(int arg\)和protected boolean tryReleaseShared\(int release\)
+
+#### CountDownLatch的实现
+
+```java
+        protected int tryAcquireShared(int acquires) {
+            return (getState() == 0) ? 1 : -1;
+        }
+        
+        protected boolean tryReleaseShared(int releases) {
+            // Decrement count; signal when transition to zero
+            for (;;) {
+                int c = getState();
+                if (c == 0)
+                    return false;
+                int nextc = c-1;
+                if (compareAndSetState(c, nextc))
+                    return nextc == 0;
+            }
         }
 ```
 
