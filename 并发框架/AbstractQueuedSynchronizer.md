@@ -149,7 +149,7 @@ public class Mutex implements Lock,Serializable {
 
             selfInterrupt();
     }
-    
+
 =>AbstractQueuedSynchronizer.AddWaiter
 private Node addWaiter(Node mode) {
     Node node = new Node(Thread.currentThread(), mode);        //用当前线程构建一个Node,mode表示是独占的，还是共享的，
@@ -226,13 +226,12 @@ final boolean acquireQueued(final Node node, int arg) {
         }
         return false;
     }
-    
+
     private void unparkSuccessor(Node node) {
         //对当前节点设置为完成状态
         int ws = node.waitStatus;
         if (ws < 0)
             compareAndSetWaitStatus(node, ws, 0);
-        
         //获取后继节点，如果满足要求，那么唤醒
         //如果没满足条件，从队列尾寻找符合要求的节点唤醒
         Node s = node.next;
@@ -245,6 +244,53 @@ final boolean acquireQueued(final Node node, int arg) {
         if (s != null)
             LockSupport.unpark(s.thread);
     }
+```
+
+* ### protected boolean tryAcquire\(int arg\)
+
+#### 这个是自定义同步器需要实现的方法, 用于独占模式
+
+#### 下面是ReentrantLock的非公平锁和公平锁的实现
+
+```java
+      final boolean nonfairTryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+                if (compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+                int nextc = c + acquires;
+                if (nextc < 0) // overflow
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }
+        
+       protected final boolean tryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+                if (!hasQueuedPredecessors() &&
+                    compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+                int nextc = c + acquires;
+                if (nextc < 0)
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }
 ```
 
 
