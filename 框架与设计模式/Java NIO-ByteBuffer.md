@@ -10,7 +10,7 @@
 public final class ByteOrder{
     public static final ByteOrder BIG_ENDIAN;       //大端 
     public static final ByteOrder LITTLE_ENDIAN;    //小端
-    
+
     public static ByteOrder nativeOrder()           //返回运行JVM机器的字节顺序
 }
 
@@ -53,4 +53,27 @@ System.out.println(c);
 ```
 
 ![](/assets/20140616002626656.jpeg)
+
+* ### 数据元素视图
+
+```java
+ByteBuffer buff = ByteBuffer.allocate(100);  
+buff.putShort((short)100);  
+buff.putInt(200);  
+buff.putLong(300L);  
+buff.putFloat(400.5f);  
+buff.putDouble(500.56);  
+buff.putChar('A');  
+
+buff.flip();  
+
+buff.getShort();//return 100  
+buff.getInt();//return 200  
+buff.getLong();//return 300  
+buff.getFloat();//return 400.5  
+buff.getDouble();//return 500.56  
+buff.getChar();//return 'A' 
+```
+
+
 
