@@ -163,5 +163,9 @@ public abstract CharBuffer asReadOnlyBuffer();    //复制为一个只读缓冲�
 public abstract CharBuffer slice();               //复制一个从源缓冲position到limit的新缓冲区
 ```
 
+# ByteBuffer =&gt; IO操作等核心
+
+
+
 
 
