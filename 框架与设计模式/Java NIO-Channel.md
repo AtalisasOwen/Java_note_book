@@ -72,11 +72,25 @@ public class Test {
 | :--- | :--- | :--- |
 | read\(\) | read\(\) | read\(\) |
 | write\(\) | write\(\) | write\(\) |
-| size\(\) | length\(\) | fstat\(\) |
-| position\(\) | getFilePointer\(\) | lseek\(\) |
-| position\(long newPosition\) | seek\(\) | lseek\(\) |
-| truncate\(\) | setLength\(\) | ftruncate\(\) |
-| force\(\) | getFD\(\).sync\(\) | fsync\(\) |
+| size\(\) | length\(\) | fstat\(\): 成功返回0，失败返回1 |
+| position\(\):表示文件中当前字节位置 | getFilePointer\(\):返回当前偏移 | lseek\(\) |
+| position\(long newPosition\):设置位置 | seek\(\):设置文件偏移 | lseek\(\) |
+| truncate\(long size\):删减到指定大小 | setLength\(\) | ftruncate\(\) |
+| force\(boolean metaData\):参数不管，这个方法的作用相当于flush\(\) | getFD\(\).sync\(\) | fsync\(\) |
+
+* ## 文件锁定
+
+```java
+//独占锁，锁定全部文件
+public final FileLock lock();
+//开始位置，和锁定区域的大小，以及是共享锁和独占锁
+public abstract FileLock lock(long position, long size, boolean shared);
+
+//不能立即获取，则返回null
+public final FileLock tryLock();
+//开始位置，和锁定区域的大小，以及是共享锁和独占锁 => 尝试获取
+public abstract FileLock tryLock(long position, long size, boolean shared);
+```
 
 
 
