@@ -73,10 +73,10 @@ public class Test {
 | read\(\) | read\(\) | read\(\) |
 | write\(\) | write\(\) | write\(\) |
 | size\(\) | length\(\) | fstat\(\) |
-| position\(\) | getFilePointer\(\) |  |
-| position\(long newPosition\) | seek\(\) |  |
-| truncate\(\) | setLength\(\) |  |
-| force\(\) | getFD\(\).sync\(\) |  |
+| position\(\) | getFilePointer\(\) | lseek\(\) |
+| position\(long newPosition\) | seek\(\) | lseek\(\) |
+| truncate\(\) | setLength\(\) | ftruncate\(\) |
+| force\(\) | getFD\(\).sync\(\) | fsync\(\) |
 
 
 
