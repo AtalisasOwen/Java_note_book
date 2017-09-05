@@ -28,5 +28,31 @@ channel.write(buffer);        //InputStrem只能读，不能写
 channel.read(buffer);         //将文件内容读入channel
 ```
 
+```java
+public class Test {
+    public static void main(String...args) throws IOException{
+        ReadableByteChannel source = Channels.newChannel(System.in);
+        WritableByteChannel destin = Channels.newChannel(System.out);
+
+        channelCopy2(source,destin);
+
+        source.close();
+        destin.close();
+    }
+
+    private static void channelCopy2(ReadableByteChannel src,
+                                     WritableByteChannel des) throws IOException{
+        ByteBuffer buffer = ByteBuffer.allocateDirect(10);
+        while (src.read(buffer) != -1){     //将输入的内容读取到buffer
+            buffer.flip();                  //切换为写状态
+            while (buffer.hasRemaining()){  //比如只用了5个字节
+                des.write(buffer);          //那就只写5个字节
+            }
+            buffer.clear();                 //清空缓存区
+        }
+    }
+}
+```
+
 
 
