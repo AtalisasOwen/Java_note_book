@@ -58,5 +58,7 @@ public class Test {
 
 #### 可以通过isOpen\(\)来查看通道是否开着。当一个通道实现了InterruptibleChannel接口，当对被阻塞的通道调用interrupt\(\)方法时，通道也会自动关闭。
 
+* ## Scatter/Gather
 
+![](/assets/屏幕快照 2017-09-05 上午11.07.17.png)
 
