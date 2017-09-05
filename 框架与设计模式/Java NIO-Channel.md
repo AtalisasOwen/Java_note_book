@@ -17,5 +17,16 @@ ServerSocketChannel ssc = ServerSocketChannel.open();
 ssc.socket().bind(new InetSocket("119.28.83.71",2222));
 ```
 
+* ## 使用通道
+
+```java
+//注意区分只读文件和可读写文件
+FileInputStream input = new FileInputStream("filename");
+FileChannel channel = input.getChannel();
+
+channel.write(buffer);        //InputStrem只能读，不能写
+channel.read(buffer);         //将文件内容读入channel
+```
+
 
 
