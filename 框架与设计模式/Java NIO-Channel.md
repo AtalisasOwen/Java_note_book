@@ -92,5 +92,19 @@ public final FileLock tryLock();
 public abstract FileLock tryLock(long position, long size, boolean shared);
 ```
 
+### FileLock
+
+```java
+public abstract class FileLock{
+    public final FileChannel channel();                        //返回创建锁的Channel
+    public final long position();                              //锁定的起始位置
+    public final long size();                                  //锁定的大小
+    public final boolean isShared();                           //判断是独占还是共享锁
+    public final boolean overlaps(long position, long size);   //是否与一个指定的区域有重叠
+    public abstract boolean isValid();                         //锁的有效性
+    public abstract void release() throws IOException;         //释放锁
+}
+```
+
 
 
