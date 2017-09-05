@@ -106,5 +106,30 @@ public abstract class FileLock{
 }
 ```
 
+* ## 内存映射文件
+
+#### 调用map\(\)会创建一个由磁盘文件支持的虚拟内存映射，并在那块虚拟内存空间外部封装一个MappedByteBuffer对象。
+
+#### ByteBuffer是在内存中建立缓存，而MappedByteBuffer是在磁盘文件建立一个缓存区。
+
+```java
+public abstract class FileChannel ...{
+
+    public abstract MappedByteBuffer map(MapMode mode, long position, long size);
+    
+    public static class MapMode{
+    
+        public static final MapMode READ_ONLY         //只可读
+            = new MapMode("READ_ONLY");
+
+        public static final MapMode READ_WRITE        //可读写
+            = new MapMode("READ_WRITE");
+
+        public static final MapMode PRIVATE            //写时拷贝，不会对底层文件做任何修改
+            = new MapMode("PRIVATE");
+    }
+}
+```
+
 
 
