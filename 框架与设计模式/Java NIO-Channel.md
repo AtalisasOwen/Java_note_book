@@ -17,7 +17,7 @@ ServerSocketChannel ssc = ServerSocketChannel.open();
 ssc.socket().bind(new InetSocket("119.28.83.71",2222));
 ```
 
-* ## 使用通道
+* ## 使用通道和关闭通道
 
 ```java
 //注意区分只读文件和可读写文件
@@ -53,6 +53,10 @@ public class Test {
     }
 }
 ```
+
+#### 调用通道的close\(\)方法，可能会导致在通道关闭底层IO服务中，似的线程暂时阻塞。
+
+#### 可以通过isOpen\(\)来查看通道是否开着。当一个通道实现了InterruptibleChannel接口，当对被阻塞的通道调用interrupt\(\)方法时，通道也会自动关闭。
 
 
 
