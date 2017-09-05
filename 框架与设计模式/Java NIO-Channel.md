@@ -62,3 +62,21 @@ public class Test {
 
 ![](/assets/屏幕快照 2017-09-05 上午11.07.17.png)
 
+![](/assets/屏幕快照 2017-09-05 下午12.31.19.png)
+
+* ## 文件通道
+
+![](/assets/屏幕快照 2017-09-05 下午12.33.33.png)
+
+| FileChannel | RandomAccessFile | POSIX system call |
+| :--- | :--- | :--- |
+| read\(\) | read\(\) | read\(\) |
+| write\(\) | write\(\) | write\(\) |
+| size\(\) | length\(\) | fstat\(\) |
+| position\(\) | getFilePointer\(\) |  |
+| position\(long newPosition\) | seek\(\) |  |
+| truncate\(\) | setLength\(\) |  |
+| force\(\) | getFD\(\).sync\(\) |  |
+
+
+
