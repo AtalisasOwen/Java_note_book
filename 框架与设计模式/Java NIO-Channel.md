@@ -116,9 +116,9 @@ public abstract class FileLock{
 public abstract class FileChannel ...{
 
     public abstract MappedByteBuffer map(MapMode mode, long position, long size);
-    
+
     public static class MapMode{
-    
+
         public static final MapMode READ_ONLY         //只可读
             = new MapMode("READ_ONLY");
 
@@ -128,6 +128,15 @@ public abstract class FileChannel ...{
         public static final MapMode PRIVATE            //写时拷贝，不会对底层文件做任何修改
             = new MapMode("PRIVATE");
     }
+}
+```
+
+### Channel-to-channel传输
+
+```java
+public abstract class FileChannel ...{
+    public abstract long transferTo(long position, long count, WriteableByteChannel target);
+    public abstract long transferFrom(ReadableByteChannel src, long position, long count);
 }
 ```
 
